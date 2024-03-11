@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 class WorkflowBase(BaseModel):
     id: Optional[int]
@@ -18,12 +18,24 @@ class WorkflowUpdate(BaseModel):
 
 
 class NodeBase(BaseModel):
+    id: Optional[int]
     type: str
     name: str
     description: Optional[str] = None
+    workflow_id: int
 
-class NodeCreate(NodeBase):
-    pass
+class NodeCreate(BaseModel):
+    type: str
+    name: str
+    description: Optional[str] = None
+    workflow_id: int
+
+
+class NodeUpdate(BaseModel):
+    type: str
+    name: str
+    description: Optional[str] = None
+    workflow_id: int
 
 class EdgeBase(BaseModel):
     source_node_id: int

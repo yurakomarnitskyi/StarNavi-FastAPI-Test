@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-import models
-import workflow.schemas as schemas
+from database import models
+from database import schemas
+
 
 def create_workflow(db: Session, workflow: schemas.WorkflowCreate):
     db_workflow = models.Workflow(**workflow.dict())
@@ -30,9 +31,9 @@ def update_workflow(db: Session, workflow_id: int, updated_workflow: schemas.Wor
 
 def delete_workflow(db: Session, workflow_id: int):
     db_workflow = db.query(models.Workflow).filter(models.Workflow.id == workflow_id).first()
- 
+
     if db_workflow:
         db.delete(db_workflow)
         db.commit()
-    
+
     return db_workflow
