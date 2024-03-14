@@ -7,12 +7,18 @@ from fastapi import (
     status,
     Response)
 from sqlalchemy.orm import Session
-import node.crud as crud_node
+from node.crud import NodeCrudOperations
 from node import schemas
 from database.database import SessionLocal
 from fastapi import APIRouter
 from database import models
-from workflow import crud as crud_workflow
+from workflow.crud import WorkflowCrudOperations
+
+
+crud_workflow = WorkflowCrudOperations()
+
+
+crud_node = NodeCrudOperations()
 
 
 router = APIRouter()
@@ -38,7 +44,8 @@ def start_workflow(name: str, description: str, workflow_id: int, db: Session = 
             detail="Workflow not found"
         )
 
-    start_node = crud_node.process_start_node(db=db, workflow_id=workflow_id, name=name, description=description)
+    start_node = crud_node.process_start_node(db=db, workflow_id=workflow_id, 
+                                              name=name, description=description)
 
     if start_node:
         return start_node
@@ -47,7 +54,8 @@ def start_workflow(name: str, description: str, workflow_id: int, db: Session = 
 
 
 @router.post("/workflows/{workflow_id}/nodes/message/", response_model=schemas.MessageNodeCreate)
-def create_message_node(workflow_id: int, name: str, description: str, text: str, status: str, db: Session = Depends(get_db)):
+def create_message_node(workflow_id: int, name: str, description: str, text: str, 
+                        status: str, db: Session = Depends(get_db)):
     """Message node endpoint."""
     workflow = crud_workflow.get_workflow(db, workflow_id)
     if not workflow:
@@ -72,7 +80,8 @@ def create_condition_node(workflow_id: int, db: Session = Depends(get_db)):
 @router.post("/workflow/{workflow_id}/nodes/end/", response_model=schemas.EndNodeCreate)
 def create_end_node(workflow_id: int, name: str, description: str, db: Session = Depends(get_db)):
     """End node endpoint."""
-    end_node = crud_node.create_end_node(db=db, workflow_id=workflow_id, name=name, description=description)
+    end_node = crud_node.create_end_node(db=db, workflow_id=workflow_id, 
+                                         name=name, description=description)
     if end_node:
         return end_node
     else:

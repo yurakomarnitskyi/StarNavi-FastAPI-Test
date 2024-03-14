@@ -11,8 +11,8 @@ class NodeBase(BaseModel):
     id: Optional[int]
     type: NodeType
     name: str
-    text: str
-    status: NodeStatus = None
+    text: Optional[str] = None 
+    status: Optional[NodeStatus] = None  
     description: str
     workflow_id: Optional[int] = None
 

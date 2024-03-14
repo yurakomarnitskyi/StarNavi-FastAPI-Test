@@ -7,14 +7,17 @@ from fastapi import (
     status,
     Response)
 from sqlalchemy.orm import Session
-import workflow.crud as crud_workflow
 from workflow import schemas
 from database.database import SessionLocal
 from typing import List
 from fastapi import APIRouter
+from workflow.crud import WorkflowCrudOperations
 
 
 router = APIRouter()
+
+
+crud_workflow = WorkflowCrudOperations()
 
 
 def get_db():
@@ -53,10 +56,10 @@ def update_workflow(workflow_id: int, updated_workflow: schemas.WorkflowUpdate,
                      db: Session = Depends(get_db)):
     """Endpoint use put method to update workflow with id."""
     db_workflow = crud_workflow.update_workflow(db, workflow_id, updated_workflow)
-        
+
     if not db_workflow:
         raise HTTPException(status_code=404, detail="Workflow not found")
-        
+
     return db_workflow
 
 
