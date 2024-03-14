@@ -1,3 +1,6 @@
+"""
+Database models for all app.
+"""
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import declarative_base, Session, relationship
 from enum import Enum as PythonEnum
@@ -6,11 +9,13 @@ from sqlalchemy.sql import text
 
 DATABASE_URL = "sqlite:///./test.db"
 
+
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 
 
 class NodeType(str, PythonEnum):
+    """NodeType model that connect with node model and using with schemas."""
     start = "start"
     message = "message"
     condition = "condition"
@@ -18,24 +23,29 @@ class NodeType(str, PythonEnum):
 
 
 class NodeStatus(str, PythonEnum):
+    """NodeStatus model that connect with node model and using with schemas."""
     pending = "pending"
     sent = "sent"
     opened = "opened"
 
+
 class Workflow(Base):
+    """Workflow model configuration."""
     __tablename__ = "workflows"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String, index=True)
-    nodes = relationship("Node", back_populates="workflow")
-
+    nodes = relationship("Node", back_populates="workflow", cascade="all, delete-orphan")
+             
 
 class Node(Base):
+    """Node model configurattion."""
     __tablename__ = "nodes"
     id = Column(Integer, primary_key=True, index=True)
     type = Column(Enum(NodeType), index=True)
     name = Column(String, index=True)
     description = Column(String, index=True)
+    text = Column(String, nullable=True)
     status = Column(Enum(NodeStatus), default=None, nullable=True)
     workflow_id = Column(Integer, ForeignKey("workflows.id"))
     workflow = relationship("Workflow", back_populates="nodes")
@@ -44,6 +54,7 @@ class Node(Base):
 
 
 class Edge(Base):
+    """Edge model configuration."""
     __tablename__ = "edges"
     id = Column(Integer, primary_key=True, index=True)
     source_node_id = Column(Integer, ForeignKey("nodes.id"))
