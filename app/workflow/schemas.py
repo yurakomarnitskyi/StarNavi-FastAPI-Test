@@ -10,15 +10,22 @@ class WorkflowBase(BaseModel):
     name: str
     description: Optional[str] = None
 
+    class Config:
+        orm_mode = True
+
 
 class WorkflowCreate(BaseModel):
     """Schema for creating workflow."""
     name: str
     description: Optional[str] = None
 
+    class Config:
+        orm_mode = True
+
 
 class WorkflowUpdate(BaseModel):
     """Schema for update workflow."""
     name: Optional[str] = None
     description: Optional[str] = None
+
 

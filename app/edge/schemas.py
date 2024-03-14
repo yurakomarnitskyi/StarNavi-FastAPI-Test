@@ -8,6 +8,9 @@ class EdgeBase(BaseModel):
     """Uses with return Edge objects."""
     source_node_id: int
     target_node_id: int
+    
+    class Config:
+        orm_mode = True
 
 
 class EdgeCreate(EdgeBase):

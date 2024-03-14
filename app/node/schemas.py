@@ -16,6 +16,9 @@ class NodeBase(BaseModel):
     description: str
     workflow_id: Optional[int] = None
 
+    class Config:
+        orm_mode = True
+
 
 class NodeCreate(NodeBase):
     """Schema for creating Node and inherits NodeBase."""
@@ -31,15 +34,24 @@ class NodeUpdate(BaseModel):
     status: NodeStatus = None
     workflow_id: Optional[int] = None
 
+    class Config:
+        orm_mode = True
+
 
 class NodeRead(BaseModel):
     """Schema for get node with id."""
     id: int
 
+    class Config:
+        orm_mode = True
+
 
 class NodeDelete(BaseModel):
     """Shema for delete node with id."""
     id: int
+
+    class Config:
+        orm_mode = True
 
 
 class MessageNodeCreate(BaseModel):
@@ -51,6 +63,9 @@ class MessageNodeCreate(BaseModel):
     text: str
     status: NodeStatus = None
 
+    class Config:
+        orm_mode = True
+
 
 class ConditionNodeCreate(BaseModel):
     """Schema for condition node."""
@@ -60,6 +75,9 @@ class ConditionNodeCreate(BaseModel):
     description: str
     workflow_id: Optional[int] = None
 
+    class Config:
+        orm_mode = True
+
 
 class EndNodeCreate(BaseModel):
     """Schema for end node."""
@@ -68,6 +86,9 @@ class EndNodeCreate(BaseModel):
     name: str
     description: str
     workflow_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
 
 
 class WorkflowNode(BaseModel):
