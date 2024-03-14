@@ -4,6 +4,18 @@ Crud operations with workflow.
 from sqlalchemy.orm import Session
 from database import models
 from workflow import schemas
+from database.models import Workflow
+from database.database import SessionLocal
+
+
+def delete_all_workflows():
+    """Clean database method."""
+    db = SessionLocal()
+    try:
+        db.query(Workflow).delete()
+        db.commit()
+    finally:
+        db.close()
 
 
 class WorkflowCrudOperations:

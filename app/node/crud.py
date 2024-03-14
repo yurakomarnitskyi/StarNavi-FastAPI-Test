@@ -7,6 +7,18 @@ from node import schemas
 from database.models import Node, NodeStatus, NodeType, Edge
 import networkx as nx
 from fastapi import HTTPException
+from database.database import SessionLocal
+from sqlalchemy.orm import joinedload
+
+def delete_all_node():
+    """Clean database method."""
+    db = SessionLocal()
+    try:
+        db.query(Node).delete()
+        db.commit()
+    finally:
+        db.close()
+
 
 class NodeCrudOperations:
     """Class with node endpoint."""
