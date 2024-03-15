@@ -32,8 +32,9 @@ class NodeCrudOperations:
     def update_node(self, db: Session, node_id: int, updated_node: schemas.NodeUpdate):
         """Update method with nodes"""
 
-        # db_node=db.query(models.Workflow).filter(models.Node.id == node_id).first()
-        db_node = db.query(models.Node).join(models.Workflow, models.Workflow.id == models.Node.workflow_id).filter(models.Node.id == node_id).first()
+        db_node = db.query(models.Node).join(
+            models.Workflow, models.Workflow.id == models.Node.workflow_id).filter(
+                models.Node.id == node_id).first()
 
         if not db_node:
             raise HTTPException(status_code=404, detail='Node id not found')
@@ -158,9 +159,7 @@ class NodeCrudOperations:
             path_nodes = []
             for node_id in path_ids:
 
-                # node = db.query(models.Node).get(node_id)
                 node = db.get(models.Node, node_id)
-
 
                 path_node = schemas.WorkflowNode(
                     id=node.id,
@@ -177,4 +176,3 @@ class NodeCrudOperations:
             raise ValueError("Could not reach end node from start node.")
 
         return schemas.WorkflowPath(path=path_nodes)
-
