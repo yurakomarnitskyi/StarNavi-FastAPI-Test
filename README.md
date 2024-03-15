@@ -15,7 +15,6 @@ Clone the repository to your local machine:
 
 ```
 git clone https://github.com/yurakomarnitskyi/StarNavi-FastAPI-Test.git
-cd app
 ```
 
 ### Install dependities dependencies
