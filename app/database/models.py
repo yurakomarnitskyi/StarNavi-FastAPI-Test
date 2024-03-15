@@ -6,7 +6,6 @@ from sqlalchemy.orm import declarative_base, relationship
 from enum import Enum as PythonEnum
 
 
-
 DATABASE_URL = "sqlite:///./test.db"
 
 
