@@ -32,7 +32,6 @@ data_workflow = {
 def test_node_start():
     """Test for creating node."""
     response_workflow = client.post('/workflows/', json=data_workflow)
-
     workflow_id = response_workflow.json()["id"]
 
     response_node = client.post(f'/workflow/{workflow_id}/start_node?name=ded&description=hjk')
@@ -43,11 +42,11 @@ def test_node_start():
 def test_message_node():
     """Test for creating message node."""
     response_workflow = client.post('/workflows/', json=data_workflow)
-
     workflow_id = response_workflow.json()["id"]
 
     response_node = client.post(
-        f'/workflows/{workflow_id}/nodes/message/?name=Test&description=About%20something%20&text=Hello&status=opened')
+        f'/workflows/{workflow_id} \
+        /nodes/message/?name=Test&description=About%20something%20&text=Hello&status=opened')
 
     assert response_node.status_code == 200
     assert response_node.json()['type'] == 'message'
@@ -57,11 +56,11 @@ def test_message_node():
 def test_condition_node():
     """Test for creating condition node."""
     response_workflow = client.post('/workflows/', json=data_workflow)
-
     workflow_id = response_workflow.json()["id"]
 
     client.post(
-        f'/workflows/{workflow_id}/nodes/message/?name=Test&description=About%20something%20&text=Hello&status=opened')
+        f'/workflows/{workflow_id} \
+        /nodes/message/?name=Test&description=About%20something%20&text=Hello&status=opened')
 
     response_node = client.post(f'/workflows/{workflow_id}/nodes/condition/')
 
@@ -72,7 +71,6 @@ def test_condition_node():
 def test_end_node():
     """Test for creating end node."""
     response_workflow = client.post('/workflows/', json=data_workflow)
-
     workflow_id = response_workflow.json()["id"]
 
     response_node = client.post(f'/workflow/{workflow_id}/nodes/end/?name=Endnode&description=Test')
@@ -116,4 +114,51 @@ def test_update_node():
 
     assert response.status_code == 200
 
+
+def test_delete_node():
+    """Test for delete method."""
+    response_workflow = client.post('/workflows/', json=data_workflow)
+    workflow_id = response_workflow.json()["id"]
+
+    client.post(f'/workflow/{workflow_id}/nodes/end/?name=End%20node%20&description=Test')
+
+    response = client.delete('/nodes/1')
+    assert response.status_code == 204
+
+
+def test_create_edge():
+    """Test for creating edge with node."""
+    response_workflow = client.post('/workflows/', json=data_workflow)
+    workflow_id = response_workflow.json()["id"]
+
+    client.post(f'/workflow/{workflow_id}/start_node?name=ded&description=hjk')
+    client.post(
+        f'/workflows/{workflow_id} \
+        /nodes/message/?name=Test&description=About%20something%20&text=Hello&status=opened')
+
+    response = client.post('workflow/1/edges?source_node_id=1&target_node_id=2')
+    assert response.status_code == 200
+    assert response.json()['source_node_id'] == 1
+    assert response.json()['target_node_id'] == 2
+
+
+def test_return_path():
+    """Test for return all path star and end."""
+    response_workflow = client.post('/workflows/', json=data_workflow)
+    workflow_id = response_workflow.json()["id"]
+
+    client.post(f'/workflow/{workflow_id}/start_node?name=ded&description=hjk')
+    client.post(
+        f'/workflows/{workflow_id} \
+        /nodes/message/?name=Test&description=About%20something%20&text=Hello&status=opened')
+    client.post(f'/workflows/{workflow_id}/nodes/condition/')
+    client.post(f'/workflow/{workflow_id}/nodes/end/?name=Endnode&description=Test')
+
+    client.post('workflow/1/edges?source_node_id=1&target_node_id=2')
+    client.post('workflow/1/edges?source_node_id=2&target_node_id=3')
+    client.post('workflow/1/edges?source_node_id=3&target_node_id=4')
+
+    response = client.post(f'/workflows/{workflow_id}/run/')
+    assert response.status_code == 200
+    assert len(response.json()['path']) == 4
 

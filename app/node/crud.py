@@ -8,7 +8,7 @@ from database.models import Node, NodeStatus, NodeType, Edge
 import networkx as nx
 from fastapi import HTTPException
 from database.database import SessionLocal
-from sqlalchemy.orm import joinedload
+
 
 def delete_all_node():
     """Clean database method."""
@@ -25,14 +25,15 @@ class NodeCrudOperations:
 
 
     def get_node(self, db: Session, node_id: int):
-        """Get node object"""
+        """Get node object with its associated workflow."""
         return db.query(models.Node).filter(models.Node.id == node_id).first()
 
 
     def update_node(self, db: Session, node_id: int, updated_node: schemas.NodeUpdate):
         """Update method with nodes"""
 
-        db_node= db.query(models.Workflow).filter(models.Node.id == node_id).first()
+        # db_node=db.query(models.Workflow).filter(models.Node.id == node_id).first()
+        db_node = db.query(models.Node).join(models.Workflow, models.Workflow.id == models.Node.workflow_id).filter(models.Node.id == node_id).first()
 
         if not db_node:
             raise HTTPException(status_code=404, detail='Node id not found')
@@ -45,7 +46,7 @@ class NodeCrudOperations:
                 models.Workflow.id == updated_node.workflow_id).first()
             if not workflow_id:
                 raise HTTPException(status_code=404, detail='Workflow id not found')
-        
+
         for key, value in updated_node.dict().items():
             setattr(db_node, key, value)
 
@@ -58,7 +59,7 @@ class NodeCrudOperations:
     def delete_node(self, db: Session, node_id: int):
         """Delete method."""
         db_node = db.query(models.Node).filter(models.Node.id == node_id).first()
-        
+
         if db_node:
             db.delete(db_node)
             db.commit()
@@ -157,7 +158,9 @@ class NodeCrudOperations:
             path_nodes = []
             for node_id in path_ids:
 
-                node = db.query(models.Node).get(node_id)
+                # node = db.query(models.Node).get(node_id)
+                node = db.get(models.Node, node_id)
+
 
                 path_node = schemas.WorkflowNode(
                     id=node.id,
