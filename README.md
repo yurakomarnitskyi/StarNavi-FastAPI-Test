@@ -14,7 +14,7 @@
 Clone the repository to your local machine:
 
 ```
-git clone --recurse-submodules https://github.com/yurakomarnitskyi/StarNavi-FastAPI-Test.git
+git clone https://github.com/yurakomarnitskyi/StarNavi-FastAPI-Test.git
 cd app
 ```
 
