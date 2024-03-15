@@ -1,5 +1,4 @@
 # StarNavi-FastAPI-TestTask
-# Event Monitor
 - Python
 - FastAPI
 - SQLAlchemy 
